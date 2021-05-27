@@ -4,6 +4,7 @@ using System.Text;
 
 namespace SISCSharp
 {
+    // requirements based in part by https://rosettacode.org/wiki/Subleq
     public class EightBitSubleqMachine
     {
         public sbyte[] Memory { get; set; }
@@ -21,19 +22,22 @@ namespace SISCSharp
 
         public void Run()
         {   
-            while (ip >= 0)
+            while (((sbyte)ip) != -1)
             {
                 // load new instruction
                 a = (byte) Memory[ip];
                 b = (byte) Memory[ip + 1];
                 c = (byte) Memory[ip + 2];
 
-                // if invalid memory values
-                // add checks for address values, if special value - take input from console or output to console???
-                if (((sbyte) a) < 0 || ((sbyte) b) < 0)
+                if ((sbyte)a == -1)
                 {
-                    // set ip to a halting value
-                    ip = unchecked((byte) -1);
+                    // read byte
+                    Memory[b] = ((sbyte) Console.ReadKey().KeyChar);
+                }
+                else if ((sbyte)b == -1)
+                {
+                    // write byte to output
+                    Console.Write((char)Memory[a]);
                 }
                 else
                 {
