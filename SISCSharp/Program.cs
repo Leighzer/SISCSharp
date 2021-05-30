@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 namespace SISCSharp
 {
@@ -17,21 +19,37 @@ namespace SISCSharp
                 Console.WriteLine($"{largs.Count} arguments received. An input file and output file must be provided");
             }
 
-            string inputFile = largs[0];
-            string outputFile = largs[1];
-            bool overwriteExistingOutputFile = (largs[2] ?? "").ToLower() == "-o";
+            string inputFilePath = largs[0];
+            string outputFilePath = largs[1];
 
-            // validate input file - make sure exists and we can read it
+            bool overwriteExistingOutputFile = largs.Any(x => x == "-o");
+            bool outputToConsole = largs.Any(x => x == "-c");
 
-            // valid output file - if exists ask user if sure you want to overwrite (unless override arg is provided)
+            // arg validation
+            bool inputFileExists = File.Exists(inputFilePath);
+            if (!inputFileExists)
+            {
+                Console.WriteLine("Input file does not exist.");
+                return;
+            }
 
-            // load subleq machine with input file
+            bool outputFileExists = File.Exists(outputFilePath);
+            if (outputFileExists && !overwriteExistingOutputFile)
+            {
+                Console.WriteLine("Output file already exists. Use arg flag -o to have this file overwritten.");
+                return;
+            }
 
-            // run subleq machine
+            byte[] unsignedMemoryToLoad = new byte[256];
+            using (FileStream ifs = new FileStream(inputFilePath, FileMode.Open))
+            {
+                ifs.Read(unsignedMemoryToLoad, 0, 256);
+            }
+            sbyte[] signedMemoryToLoad = unsignedMemoryToLoad.Select(x => (sbyte)x).ToArray();
 
-            // write subleq machine tap to file
+            EightBitSubleqMachine subleqMachine = new EightBitSubleqMachine(signedMemoryToLoad);
 
-            // done
+            subleqMachine.Run();
         }
 
         public static string Pad(byte b)
