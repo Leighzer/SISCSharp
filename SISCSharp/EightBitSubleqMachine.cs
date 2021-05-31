@@ -33,11 +33,13 @@ namespace SISCSharp
                 {
                     // read byte
                     Memory[b] = ((sbyte) Console.ReadKey().KeyChar);
+                    ip += 3;
                 }
                 else if ((sbyte)b == -1)
                 {
                     // write byte to output
                     Console.Write((char)Memory[a]);
+                    ip += 3;
                 }
                 else
                 {
