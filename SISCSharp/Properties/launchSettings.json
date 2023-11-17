@@ -2,7 +2,7 @@
   "profiles": {
     "SISCSharp": {
       "commandName": "Project",
-      "commandLineArgs": "hello-world"
+      "commandLineArgs": "programs/hello-world"
     }
   }
 }
